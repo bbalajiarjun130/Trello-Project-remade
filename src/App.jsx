@@ -2,7 +2,7 @@ import React from 'react';
 import Column from './components/Column';
 import { useTaskManager } from './hooks/useTaskManager';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
-import { columnConfig, COLUMN_TYPES } from './config/columnConfig';
+import { columnConfig, COLUMN_TYPES, canMoveTo } from './config/columnConfig';
 import styles from './App.module.css';
 
 export default function App() {
@@ -32,6 +32,11 @@ export default function App() {
           <p className={styles.subtitle}>
             Organize your tasks with drag & drop simplicity
           </p>
+          {restrictionMessage && (
+            <div className={styles.restrictionToast}>
+              ⚠️ {restrictionMessage}
+            </div>
+          )}
         </header>
         
         <div className={styles.columnsContainer}>
