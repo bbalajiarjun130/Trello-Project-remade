@@ -39,6 +39,14 @@ export function getAllowedTargets(sourceColumn) {
   return allowedTransitions[sourceColumn] || [];
 }
 
+// Define allowed transitions between columns. Tasks should generally
+// progress from TODO -> IN_PROGRESS -> COMPLETE. Adjust as needed.
+const allowedTransitions = {
+  [COLUMN_TYPES.TODO]: [COLUMN_TYPES.IN_PROGRESS],
+  [COLUMN_TYPES.IN_PROGRESS]: [COLUMN_TYPES.COMPLETE],
+  [COLUMN_TYPES.COMPLETE]: []
+};
+
 export function addColumnType(key, config) {
   return {
     ...columnConfig,

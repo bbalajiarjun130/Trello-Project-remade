@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# Trello Project Remade
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Minimal React + Vite starter for the Trello-style board app in this repository.
 
-Currently, two official plugins are available:
+## About
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project uses Vite as the build tool and React for the UI. The repository contains a mix of `.jsx` components and a `main.tsx` entry — TypeScript is used for the Vite entry point while most components remain JSX.
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js (16+ recommended)
+- npm (or `yarn` / `pnpm` if you prefer)
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Install dependencies and run the dev server from the project root:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Or with `yarn`:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+yarn
+yarn dev
 ```
+
+Or with `pnpm`:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## Available Scripts
+
+- `npm run dev` — start Vite dev server
+- `npm run build` — build for production (`tsc -b && vite build`)
+- `npm run preview` — locally preview built site
+- `npm run lint` — run ESLint
+- `npm test` — run tests (Jest)
+
+These are defined in `package.json`.
+
+## Project Structure (high level)
+
+- `index.html` — Vite entry HTML
+- `src/main.tsx` — application entry
+- `src/App.jsx` — main app component
+- `src/components/` — UI components
+- `src/hooks/` — custom hooks used in the app
+
+## Notes
+
+- The repo currently includes `@vitejs/plugin-react` and React 19 in `devDependencies`/`dependencies`.
+- The `build` script runs TypeScript's `tsc -b` before `vite build`; if you don't use TypeScript for all files you can adjust the build pipeline or add `skipLibCheck` / appropriate `tsconfig` settings.
+
+## Next Steps
+
+- Install dependencies if you haven't: `npm install`
+- Start the dev server: `npm run dev`
+- If you want, I can run these steps for you now or add a `CONTRIBUTING.md` with setup notes.

@@ -5,7 +5,6 @@ export function useDragAndDrop(onDrop) {
   const [draggedItem, setDraggedItem] = useState(null);
   const [restrictionMessage, setRestrictionMessage] = useState(null);
 
-
   const handleDragStart = useCallback((task, sourceColumn) => {
     setDraggedItem({ task, sourceColumn });
     setRestrictionMessage(null);
@@ -47,6 +46,7 @@ export function useDragAndDrop(onDrop) {
     draggedItem,
     handleDragStart,
     handleDragEnd,
-    handleDrop
+    handleDrop,
+    restrictionMessage
   };
 }
