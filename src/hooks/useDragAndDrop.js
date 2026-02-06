@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { canMoveTo } from '../config/columnConfig';
 
 export function useDragAndDrop(onDrop) {
   const [draggedItem, setDraggedItem] = useState(null);
