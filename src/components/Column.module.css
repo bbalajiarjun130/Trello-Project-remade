@@ -1,0 +1,199 @@
+.column {
+  flex-shrink: 0;
+  width: 20rem;
+  animation: slideIn 0.5s ease-out forwards;
+  transition: all 0.3s ease;
+}
+
+.column.dragOver {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.columnInner {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.columnHeader {
+  padding: 1.5rem;
+  color: white;
+}
+
+/* Column color variants */
+.columnHeader.todo {
+  background: linear-gradient(to right, #fbbf24, #f97316);
+}
+
+.columnHeader.inProgress {
+  background: linear-gradient(to right, #60a5fa, #6366f1);
+}
+
+.columnHeader.complete {
+  background: linear-gradient(to right, #34d399, #14b8a6);
+}
+
+.headerTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.taskCount {
+  font-size: 0.875rem;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+}
+
+.taskList {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.inputContainer {
+  background: linear-gradient(to right, var(--bg-from), var(--bg-to));
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 2px dashed #cbd5e1;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.inputContainer.todo {
+  --bg-from: #fffbeb;
+  --bg-to: #fff7ed;
+}
+
+.inputContainer.inProgress {
+  --bg-from: #eff6ff;
+  --bg-to: #eef2ff;
+}
+
+.inputContainer.complete {
+  --bg-from: #ecfdf5;
+  --bg-to: #f0fdfa;
+}
+
+.taskInput {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 2px solid #e2e8f0;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.taskInput:focus {
+  border-color: #94a3b8;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.addButton {
+  flex: 1;
+  background: #334155;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background: #1e293b;
+}
+
+.cancelButton {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid #cbd5e1;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background: #f1f5f9;
+}
+
+.addTaskButton {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 2px dashed #cbd5e1;
+  background: transparent;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addTaskButton:hover {
+  border-color: #94a3b8;
+  color: #334155;
+}
+
+.addTaskButton:hover .plusIcon {
+  transform: rotate(90deg);
+}
+
+.plusIcon {
+  transition: transform 0.2s;
+}
+
+.restrictedNotice {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #92400e;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
