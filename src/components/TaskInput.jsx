@@ -12,7 +12,11 @@ export default function TaskInput({ onAdd, onCancel, bgGradient }) {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSubmit();
-    } else if (e.key === 'Escape') {
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
       onCancel();
     }
   };
@@ -24,6 +28,7 @@ export default function TaskInput({ onAdd, onCancel, bgGradient }) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyDown}
         placeholder="Enter task name..."
         className="w-full px-3 py-2 rounded-lg border-2 border-slate-200 focus:border-slate-400 focus:outline-none mb-2"
         autoFocus
