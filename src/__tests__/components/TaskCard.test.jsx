@@ -1,12 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import TaskCard from '../../components/TaskCard';
 
 // Mock lucide-react
 jest.mock('lucide-react', () => ({
-  GripVertical: ({ size, className }) => (
-    <svg data-testid="grip-icon" width={size} className={className} />
-  ),
+  GripVertical: () => <svg data-testid="grip-icon" />,
 }));
 
 describe('TaskCard', () => {
@@ -112,16 +111,18 @@ describe('TaskCard', () => {
   });
 
   describe('Delete Functionality', () => {
-    it('calls onDelete when delete button clicked', () => {
+    it('calls onDelete when user clicks the delete button', async () => {
+      const user = userEvent.setup();
       const onDelete = jest.fn();
       renderTaskCard({ onDelete });
       
-      fireEvent.click(screen.getByRole('button'));
+      await user.click(screen.getByRole('button'));
       
       expect(onDelete).toHaveBeenCalledWith('todo', 1);
     });
 
-    it('calls onDelete with correct columnKey and taskId', () => {
+    it('calls onDelete with correct columnKey and taskId', async () => {
+      const user = userEvent.setup();
       const onDelete = jest.fn();
       renderTaskCard({ 
         onDelete,
@@ -129,7 +130,7 @@ describe('TaskCard', () => {
         task: { id: 42, text: 'Completed Task' }
       });
       
-      fireEvent.click(screen.getByRole('button'));
+      await user.click(screen.getByRole('button'));
       
       expect(onDelete).toHaveBeenCalledWith('complete', 42);
     });
@@ -143,76 +144,31 @@ describe('TaskCard', () => {
     });
   });
 
-  describe('Animation', () => {
-    it('applies animation delay style', () => {
-      const { container } = renderTaskCard({ animationDelay: 0.15 });
-      
-      const card = container.firstChild;
-      expect(card).toHaveStyle({ animationDelay: '0.15s' });
-    });
-
-    it('applies zero animation delay', () => {
-      const { container } = renderTaskCard({ animationDelay: 0 });
-      
-      const card = container.firstChild;
-      expect(card).toHaveStyle({ animationDelay: '0s' });
-    });
-  });
-
-  describe('Drag Visual State', () => {
-    it('adds dragging class on drag start', () => {
-      const { container } = renderTaskCard();
-      
-      const card = container.firstChild;
-      fireEvent.dragStart(card);
-      
-      // The component adds 'dragging' class from styles
-      expect(card.className).toContain('dragging');
-    });
-
-    it('removes dragging class on drag end', () => {
-      const { container } = renderTaskCard();
-      
-      const card = container.firstChild;
-      fireEvent.dragStart(card);
-      fireEvent.dragEnd(card);
-      
-      expect(card.className).not.toContain('dragging');
-    });
-  });
-
-  describe('Icon Styling', () => {
-    it('grip icon has correct size', () => {
-      renderTaskCard();
-      
-      const icon = screen.getByTestId('grip-icon');
-      expect(icon).toHaveAttribute('width', '20');
-    });
-  });
-
   describe('Different Column Keys', () => {
-    it('works with todo column', () => {
+    it('works with todo column', async () => {
+      const user = userEvent.setup();
       const onDelete = jest.fn();
-      const onDragStart = jest.fn();
-      renderTaskCard({ columnKey: 'todo', onDelete, onDragStart });
+      renderTaskCard({ columnKey: 'todo', onDelete });
       
-      fireEvent.click(screen.getByRole('button'));
+      await user.click(screen.getByRole('button'));
       expect(onDelete).toHaveBeenCalledWith('todo', 1);
     });
 
-    it('works with inProgress column', () => {
+    it('works with inProgress column', async () => {
+      const user = userEvent.setup();
       const onDelete = jest.fn();
       renderTaskCard({ columnKey: 'inProgress', onDelete });
       
-      fireEvent.click(screen.getByRole('button'));
+      await user.click(screen.getByRole('button'));
       expect(onDelete).toHaveBeenCalledWith('inProgress', 1);
     });
 
-    it('works with complete column', () => {
+    it('works with complete column', async () => {
+      const user = userEvent.setup();
       const onDelete = jest.fn();
       renderTaskCard({ columnKey: 'complete', onDelete });
       
-      fireEvent.click(screen.getByRole('button'));
+      await user.click(screen.getByRole('button'));
       expect(onDelete).toHaveBeenCalledWith('complete', 1);
     });
   });

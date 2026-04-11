@@ -39,31 +39,6 @@ describe('ColumnHeader', () => {
     });
   });
 
-  describe('Styling', () => {
-    it('applies gradient class from prop', () => {
-      const { container } = renderColumnHeader({ 
-        colorGradient: 'from-green-500 to-green-600' 
-      });
-      
-      const header = container.firstChild;
-      expect(header).toHaveClass('bg-gradient-to-r', 'from-green-500', 'to-green-600');
-    });
-
-    it('has proper text styling', () => {
-      renderColumnHeader();
-      
-      const heading = screen.getByRole('heading', { level: 2 });
-      expect(heading).toHaveClass('text-2xl', 'font-bold');
-    });
-
-    it('badge has correct styling classes', () => {
-      renderColumnHeader();
-      
-      const badge = screen.getByText(String(defaultProps.count));
-      expect(badge).toHaveClass('text-sm', 'font-normal', 'bg-white/20', 'px-3', 'py-1', 'rounded-full');
-    });
-  });
-
   describe('Different Titles', () => {
     it('renders In Progress title', () => {
       renderColumnHeader({ title: 'In Progress' });

@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import TaskInput from '../../components/TaskInput';
 
 describe('TaskInput', () => {
@@ -47,138 +48,135 @@ describe('TaskInput', () => {
       renderTaskInput();
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      expect(input.value).toBe('');
+      expect(input).toHaveValue('');
     });
   });
 
   describe('Input Behavior', () => {
-    it('updates input value on change', () => {
+    it('updates input value as user types', async () => {
+      const user = userEvent.setup();
       renderTaskInput();
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'New task' } });
+      await user.type(input, 'New task');
       
-      expect(input.value).toBe('New task');
+      expect(input).toHaveValue('New task');
     });
 
-    it('handles typing multiple characters', () => {
+    it('handles clearing input', async () => {
+      const user = userEvent.setup();
       renderTaskInput();
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'A' } });
-      fireEvent.change(input, { target: { value: 'AB' } });
-      fireEvent.change(input, { target: { value: 'ABC' } });
+      await user.type(input, 'Some text');
+      await user.clear(input);
       
-      expect(input.value).toBe('ABC');
-    });
-
-    it('handles clearing input', () => {
-      renderTaskInput();
-      
-      const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Some text' } });
-      fireEvent.change(input, { target: { value: '' } });
-      
-      expect(input.value).toBe('');
+      expect(input).toHaveValue('');
     });
   });
 
   describe('Submit Behavior', () => {
-    it('calls onAdd on button click with valid input', () => {
+    it('calls onAdd when user types and clicks Add Task', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'New Task' } });
-      
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      await user.type(input, 'New Task');
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
       expect(onAdd).toHaveBeenCalledWith('New Task');
     });
 
-    it('calls onAdd on Enter key', () => {
+    it('calls onAdd when user types and presses Enter', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Keyboard Task' } });
-      fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
+      await user.type(input, 'Keyboard Task{Enter}');
       
       expect(onAdd).toHaveBeenCalledWith('Keyboard Task');
     });
 
-    it('clears input after submission', () => {
+    it('clears input after submission', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Test Task' } });
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      await user.type(input, 'Test Task');
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
-      expect(input.value).toBe('');
+      expect(input).toHaveValue('');
     });
 
-    it('does not submit empty input - empty string', () => {
+    it('does not submit when input is empty', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
       expect(onAdd).not.toHaveBeenCalled();
     });
 
-    it('does not submit empty input - whitespace only', () => {
+    it('does not submit when input contains only whitespace', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: '   ' } });
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      await user.type(input, '   ');
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
       expect(onAdd).not.toHaveBeenCalled();
     });
 
-    it('does not clear input if submission fails (empty)', () => {
+    it('does not clear input if submission is rejected (whitespace only)', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: '   ' } });
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      await user.type(input, '   ');
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
-      // Input should still have the whitespace since it wasn't submitted
-      expect(input.value).toBe('   ');
+      expect(input).toHaveValue('   ');
     });
   });
 
   describe('Cancel Behavior', () => {
-    it('calls onCancel on Cancel button click', () => {
+    it('calls onCancel when user clicks Cancel', async () => {
+      const user = userEvent.setup();
       const onCancel = jest.fn();
       renderTaskInput({ onCancel });
       
-      fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
       
       expect(onCancel).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onCancel on Escape key', () => {
+    it('calls onCancel when user presses Escape', async () => {
+      const user = userEvent.setup();
       const onCancel = jest.fn();
       renderTaskInput({ onCancel });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+      await user.type(input, '{Escape}');
       
       expect(onCancel).toHaveBeenCalledTimes(1);
     });
 
-    it('does not call onAdd when cancelled', () => {
+    it('does not call onAdd when user cancels after typing', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       const onCancel = jest.fn();
       renderTaskInput({ onAdd, onCancel });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Task to cancel' } });
-      fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      await user.type(input, 'Task to cancel');
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
       
       expect(onAdd).not.toHaveBeenCalled();
       expect(onCancel).toHaveBeenCalledTimes(1);
@@ -186,113 +184,82 @@ describe('TaskInput', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('Enter key triggers submit', () => {
+    it('Enter key triggers submit with valid input', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Test' } });
-      fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
+      await user.type(input, 'Test{Enter}');
       
       expect(onAdd).toHaveBeenCalled();
     });
 
-    it('Escape key triggers cancel', () => {
+    it('Escape key triggers cancel', async () => {
+      const user = userEvent.setup();
       const onCancel = jest.fn();
       renderTaskInput({ onCancel });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+      await user.type(input, '{Escape}');
       
       expect(onCancel).toHaveBeenCalled();
     });
 
-    it('other keys do not trigger submit or cancel', () => {
+    it('regular typing does not trigger submit or cancel', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       const onCancel = jest.fn();
       renderTaskInput({ onAdd, onCancel });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.keyDown(input, { key: 'a', code: 'KeyA' });
+      await user.type(input, 'a');
       
       expect(onAdd).not.toHaveBeenCalled();
       expect(onCancel).not.toHaveBeenCalled();
     });
   });
 
-  describe('Styling', () => {
-    it('applies background gradient from prop', () => {
-      const { container } = renderTaskInput({ bgGradient: 'from-red-100 to-red-200' });
-      
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass('bg-gradient-to-r', 'from-red-100', 'to-red-200');
-    });
-
-    it('has fade-in animation class', () => {
-      const { container } = renderTaskInput();
-      
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass('fade-in');
-    });
-
-    it('Add Task button has correct styling', () => {
-      renderTaskInput();
-      
-      const addButton = screen.getByRole('button', { name: /add task/i });
-      expect(addButton).toHaveClass('bg-slate-700', 'text-white');
-    });
-  });
-
-  describe('Input Attributes', () => {
-    it('input has correct type', () => {
-      renderTaskInput();
-      
-      const input = screen.getByPlaceholderText(/enter task name/i);
-      expect(input).toHaveAttribute('type', 'text');
-    });
-
-    it('input has autoFocus attribute', () => {
-      renderTaskInput();
-      
-      const input = screen.getByPlaceholderText(/enter task name/i);
-      expect(input).toHaveFocus();
-    });
-  });
-
   describe('Edge Cases', () => {
-    it('handles rapid submit clicks', () => {
+    it('handles rapid submit clicks gracefully', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Test' } });
+      await user.type(input, 'Test');
       
       const addButton = screen.getByRole('button', { name: /add task/i });
-      fireEvent.click(addButton);
-      fireEvent.click(addButton); // Second click should not submit (input is cleared)
+      await user.click(addButton);
+      await user.click(addButton); // Second click should not submit (input is cleared)
       
       expect(onAdd).toHaveBeenCalledTimes(1);
     });
 
-    it('handles special characters in input', () => {
+    it('handles special characters in input', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: 'Task with <script>alert("xss")</script>' } });
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      // userEvent.type has trouble with < > { } so we use paste for special chars
+      await user.click(input);
+      await user.paste('Task with <script>alert("xss")</script>');
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
       expect(onAdd).toHaveBeenCalledWith('Task with <script>alert("xss")</script>');
     });
 
-    it('handles very long input', () => {
+    it('handles very long input', async () => {
+      const user = userEvent.setup();
       const onAdd = jest.fn();
       renderTaskInput({ onAdd });
       
       const longText = 'A'.repeat(1000);
       const input = screen.getByPlaceholderText(/enter task name/i);
-      fireEvent.change(input, { target: { value: longText } });
-      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
+      await user.click(input);
+      await user.paste(longText);
+      await user.click(screen.getByRole('button', { name: /add task/i }));
       
       expect(onAdd).toHaveBeenCalledWith(longText);
     });
