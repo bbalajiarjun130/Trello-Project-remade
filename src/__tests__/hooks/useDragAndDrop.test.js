@@ -329,4 +329,44 @@ describe('useDragAndDrop', () => {
       expect(result.current.handleDragEnd).toBe(firstCallback);
     });
   });
+
+  describe('Callback Behavior - Comprehensive', () => {
+    it('exercises onDrop callback with successful return', () => {
+      const onDrop = jest.fn(() => true);
+      const { result } = renderHook(() => useDragAndDrop(onDrop));
+      
+      const task = { id: 1, text: 'Moving Task' };
+      
+      act(() => {
+        result.current.handleDragStart(task, 'todo');
+      });
+      
+      act(() => {
+        result.current.handleDrop('inProgress');
+      });
+      
+      // Verify callback was called and return value was true
+      expect(onDrop).toHaveBeenCalledWith(1, 'todo', 'inProgress');
+      expect(result.current.restrictionMessage).toBeNull();
+    });
+
+    it('exercises onDrop callback with failed return', () => {
+      const onDrop = jest.fn(() => false);
+      const { result } = renderHook(() => useDragAndDrop(onDrop));
+      
+      const task = { id: 2, text: 'Failed Move Task' };
+      
+      act(() => {
+        result.current.handleDragStart(task, 'todo');
+      });
+      
+      act(() => {
+        result.current.handleDrop('inProgress');
+      });
+      
+      // Verify callback was called with false return
+      expect(onDrop).toHaveBeenCalledWith(2, 'todo', 'inProgress');
+      expect(result.current.restrictionMessage).toBe('Move not allowed');
+    });
+  });
 });
