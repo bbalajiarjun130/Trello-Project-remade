@@ -10,4 +10,18 @@ export default {
   },
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/main.tsx',
+    '!src/setupTests.js',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
+  },
 };

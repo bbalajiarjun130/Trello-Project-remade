@@ -278,6 +278,22 @@ describe('Column', () => {
       
       expect(dragOverEvent.preventDefault).toHaveBeenCalled();
     });
+
+    it('applies and removes dragOver state correctly', () => {
+      const { container } = renderColumn();
+      const column = container.firstChild;
+      
+      // Verify initial state doesn't have dragOver
+      expect(column.className).not.toContain('dragOver');
+      
+      // Drag over
+      fireEvent.dragOver(column);
+      expect(column.className).toContain('dragOver');
+      
+      // Drag leave
+      fireEvent.dragLeave(column);
+      expect(column.className).not.toContain('dragOver');
+    });
   });
 
   describe('Task Deletion', () => {
