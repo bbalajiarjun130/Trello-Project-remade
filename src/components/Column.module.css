@@ -34,6 +34,10 @@
   background: linear-gradient(to right, #60a5fa, #6366f1);
 }
 
+.columnHeader.inReview {
+  background: linear-gradient(to right, #a78bfa, #d8b4fe);
+}
+
 .columnHeader.complete {
   background: linear-gradient(to right, #34d399, #14b8a6);
 }
@@ -83,6 +87,11 @@
 .inputContainer.inProgress {
   --bg-from: #eff6ff;
   --bg-to: #eef2ff;
+}
+
+.inputContainer.inReview {
+  --bg-from: #faf5ff;
+  --bg-to: #f3e8ff;
 }
 
 .inputContainer.complete {

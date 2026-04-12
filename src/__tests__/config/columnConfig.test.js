@@ -16,12 +16,16 @@ describe('columnConfig', () => {
       expect(COLUMN_TYPES.IN_PROGRESS).toBe('inProgress');
     });
 
+    it('has IN_REVIEW type', () => {
+      expect(COLUMN_TYPES.IN_REVIEW).toBe('inReview');
+    });
+
     it('has COMPLETE type', () => {
       expect(COLUMN_TYPES.COMPLETE).toBe('complete');
     });
 
-    it('has exactly 3 column types', () => {
-      expect(Object.keys(COLUMN_TYPES)).toHaveLength(3);
+    it('has exactly 4 column types', () => {
+      expect(Object.keys(COLUMN_TYPES)).toHaveLength(4);
     });
   });
 
@@ -34,6 +38,11 @@ describe('columnConfig', () => {
     it('has configuration for IN_PROGRESS column', () => {
       expect(columnConfig[COLUMN_TYPES.IN_PROGRESS]).toBeDefined();
       expect(columnConfig[COLUMN_TYPES.IN_PROGRESS].title).toBe('In Progress');
+    });
+
+    it('has configuration for IN_REVIEW column', () => {
+      expect(columnConfig[COLUMN_TYPES.IN_REVIEW]).toBeDefined();
+      expect(columnConfig[COLUMN_TYPES.IN_REVIEW].title).toBe('In Review');
     });
 
     it('has configuration for COMPLETE column', () => {
@@ -75,12 +84,24 @@ describe('columnConfig', () => {
         expect(canMoveTo(COLUMN_TYPES.TODO, COLUMN_TYPES.IN_PROGRESS)).toBe(true);
       });
 
+      it('returns true for IN_PROGRESS → IN_REVIEW', () => {
+        expect(canMoveTo(COLUMN_TYPES.IN_PROGRESS, COLUMN_TYPES.IN_REVIEW)).toBe(true);
+      });
+
       it('returns true for IN_PROGRESS → COMPLETE', () => {
         expect(canMoveTo(COLUMN_TYPES.IN_PROGRESS, COLUMN_TYPES.COMPLETE)).toBe(true);
+      });
+
+      it('returns true for IN_REVIEW → COMPLETE', () => {
+        expect(canMoveTo(COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.COMPLETE)).toBe(true);
       });
     });
 
     describe('invalid transitions', () => {
+      it('returns false for TODO → IN_REVIEW (skipping IN_PROGRESS)', () => {
+        expect(canMoveTo(COLUMN_TYPES.TODO, COLUMN_TYPES.IN_REVIEW)).toBe(false);
+      });
+
       it('returns false for TODO → COMPLETE (skipping IN_PROGRESS)', () => {
         expect(canMoveTo(COLUMN_TYPES.TODO, COLUMN_TYPES.COMPLETE)).toBe(false);
       });
@@ -91,6 +112,18 @@ describe('columnConfig', () => {
 
       it('returns false for COMPLETE → IN_PROGRESS (backward)', () => {
         expect(canMoveTo(COLUMN_TYPES.COMPLETE, COLUMN_TYPES.IN_PROGRESS)).toBe(false);
+      });
+
+      it('returns false for COMPLETE → IN_REVIEW (backward)', () => {
+        expect(canMoveTo(COLUMN_TYPES.COMPLETE, COLUMN_TYPES.IN_REVIEW)).toBe(false);
+      });
+
+      it ('returns false for IN_REVIEW → TODO (backward)', () => {
+        expect(canMoveTo(COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.TODO)).toBe(false);
+      });
+
+      it ('returns false for IN_REVIEW → IN_PROGRESS (backward)', () => {
+        expect(canMoveTo(COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.IN_PROGRESS)).toBe(false);
       });
 
       it('returns false for IN_PROGRESS → TODO (backward)', () => {
@@ -119,8 +152,13 @@ describe('columnConfig', () => {
       expect(targets).toEqual([COLUMN_TYPES.IN_PROGRESS]);
     });
 
-    it('returns [COMPLETE] for IN_PROGRESS column', () => {
+    it('returns [IN_REVIEW, COMPLETE] for IN_PROGRESS column', () => {
       const targets = getAllowedTargets(COLUMN_TYPES.IN_PROGRESS);
+      expect(targets).toEqual([COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.COMPLETE]);
+    });
+
+    it('returns [COMPLETE] for IN_REVIEW column', () => {
+      const targets = getAllowedTargets(COLUMN_TYPES.IN_REVIEW);
       expect(targets).toEqual([COLUMN_TYPES.COMPLETE]);
     });
 
@@ -156,6 +194,7 @@ describe('columnConfig', () => {
       
       expect(newConfig[COLUMN_TYPES.TODO]).toEqual(columnConfig[COLUMN_TYPES.TODO]);
       expect(newConfig[COLUMN_TYPES.IN_PROGRESS]).toEqual(columnConfig[COLUMN_TYPES.IN_PROGRESS]);
+      expect(newConfig[COLUMN_TYPES.IN_REVIEW]).toEqual(columnConfig[COLUMN_TYPES.IN_REVIEW]);
       expect(newConfig[COLUMN_TYPES.COMPLETE]).toEqual(columnConfig[COLUMN_TYPES.COMPLETE]);
     });
 
@@ -186,16 +225,22 @@ describe('columnConfig', () => {
   });
 
   describe('Workflow integrity', () => {
-    it('enforces linear progression TODO → IN_PROGRESS → COMPLETE', () => {
+    it('enforces linear progression TODO → IN_PROGRESS → IN_REVIEW → COMPLETE', () => {
       // Valid forward path
       expect(canMoveTo(COLUMN_TYPES.TODO, COLUMN_TYPES.IN_PROGRESS)).toBe(true);
+      expect(canMoveTo(COLUMN_TYPES.IN_PROGRESS, COLUMN_TYPES.IN_REVIEW)).toBe(true);
+      expect(canMoveTo(COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.COMPLETE)).toBe(true);
+      
+      // Can skip from IN_PROGRESS directly to COMPLETE
       expect(canMoveTo(COLUMN_TYPES.IN_PROGRESS, COLUMN_TYPES.COMPLETE)).toBe(true);
       
-      // No skipping
+      // No skipping from earlier stages
+      expect(canMoveTo(COLUMN_TYPES.TODO, COLUMN_TYPES.IN_REVIEW)).toBe(false);
       expect(canMoveTo(COLUMN_TYPES.TODO, COLUMN_TYPES.COMPLETE)).toBe(false);
       
       // No going back
-      expect(canMoveTo(COLUMN_TYPES.COMPLETE, COLUMN_TYPES.IN_PROGRESS)).toBe(false);
+      expect(canMoveTo(COLUMN_TYPES.COMPLETE, COLUMN_TYPES.IN_REVIEW)).toBe(false);
+      expect(canMoveTo(COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.IN_PROGRESS)).toBe(false);
       expect(canMoveTo(COLUMN_TYPES.IN_PROGRESS, COLUMN_TYPES.TODO)).toBe(false);
     });
 

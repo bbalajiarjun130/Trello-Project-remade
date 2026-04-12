@@ -1,6 +1,7 @@
 export const COLUMN_TYPES = {
   TODO: 'todo',
   IN_PROGRESS: 'inProgress',
+  IN_REVIEW: 'inReview',
   COMPLETE: 'complete'
 };
 
@@ -10,6 +11,9 @@ export const columnConfig = {
   },
   [COLUMN_TYPES.IN_PROGRESS]: {
     title: 'In Progress'
+  },
+  [COLUMN_TYPES.IN_REVIEW]: {
+    title: 'In Review'
   },
   [COLUMN_TYPES.COMPLETE]: {
     title: 'Complete'
@@ -40,10 +44,11 @@ export function getAllowedTargets(sourceColumn) {
 }
 
 // Define allowed transitions between columns. Tasks should generally
-// progress from TODO -> IN_PROGRESS -> COMPLETE. Adjust as needed.
+// progress from TODO -> IN_PROGRESS -> IN_REVIEW -> COMPLETE. Adjust as needed.
 const allowedTransitions = {
   [COLUMN_TYPES.TODO]: [COLUMN_TYPES.IN_PROGRESS],
-  [COLUMN_TYPES.IN_PROGRESS]: [COLUMN_TYPES.COMPLETE],
+  [COLUMN_TYPES.IN_PROGRESS]: [COLUMN_TYPES.IN_REVIEW, COLUMN_TYPES.COMPLETE],
+  [COLUMN_TYPES.IN_REVIEW]: [COLUMN_TYPES.COMPLETE],
   [COLUMN_TYPES.COMPLETE]: []
 };
 
