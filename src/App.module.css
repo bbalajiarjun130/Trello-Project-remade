@@ -30,8 +30,8 @@
 .columnsContainer {
   display: flex;
   gap: 1.5rem;
-  overflow-x: auto;
   padding-bottom: 1rem;
+  justify-content: center;
 }
 
 .restrictionToast {

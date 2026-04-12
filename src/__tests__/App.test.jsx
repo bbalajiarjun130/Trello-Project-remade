@@ -27,19 +27,20 @@ describe('App', () => {
       expect(screen.getByText(/organize your tasks with drag & drop/i)).toBeInTheDocument();
     });
 
-    it('renders all three columns', () => {
+    it('renders all four columns', () => {
       render(<App />);
       
       expect(screen.getByText('To Do')).toBeInTheDocument();
       expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('In Review')).toBeInTheDocument();
       expect(screen.getByText('Complete')).toBeInTheDocument();
     });
 
-    it('renders three Add Task buttons (one per column)', () => {
+    it('renders four Add Task buttons (one per column)', () => {
       render(<App />);
       
       const addButtons = screen.getAllByRole('button', { name: /add task/i });
-      expect(addButtons).toHaveLength(3);
+      expect(addButtons).toHaveLength(4);
     });
 
     it('initially has zero tasks in all columns', () => {
@@ -47,7 +48,7 @@ describe('App', () => {
       
       // Each column should show 0 count
       const zeroCounts = screen.getAllByText('0');
-      expect(zeroCounts).toHaveLength(3);
+      expect(zeroCounts).toHaveLength(4);
     });
   });
 
@@ -78,7 +79,7 @@ describe('App', () => {
       render(<App />);
       
       // Initial state - all zeros
-      expect(screen.getAllByText('0')).toHaveLength(3);
+      expect(screen.getAllByText('0')).toHaveLength(4);
       
       // Add a task
       const addButtons = screen.getAllByRole('button', { name: /add task/i });
@@ -88,9 +89,9 @@ describe('App', () => {
       fireEvent.change(input, { target: { value: 'Task' } });
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
       
-      // Should now have one "1" and two "0"s
+      // Should now have one "1" and three "0"s
       expect(screen.getByText('1')).toBeInTheDocument();
-      expect(screen.getAllByText('0')).toHaveLength(2);
+      expect(screen.getAllByText('0')).toHaveLength(3);
     });
 
     it('can add multiple tasks', () => {
@@ -156,7 +157,7 @@ describe('App', () => {
       fireEvent.click(screen.getByText('×'));
       
       // Count should be back to 0
-      expect(screen.getAllByText('0')).toHaveLength(3);
+      expect(screen.getAllByText('0')).toHaveLength(4);
     });
   });
 
@@ -232,7 +233,8 @@ describe('App', () => {
       
       expect(titles[0]).toBe('To Do');
       expect(titles[1]).toBe('In Progress');
-      expect(titles[2]).toBe('Complete');
+      expect(titles[2]).toBe('In Review');
+      expect(titles[3]).toBe('Complete');
     });
   });
 
@@ -269,14 +271,21 @@ describe('App', () => {
       fireEvent.change(input, { target: { value: 'Progress Task' } });
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
       
-      // Add to third column (Complete)
+      // Add to third column (In Review)
       fireEvent.click(screen.getAllByRole('button', { name: /add task/i })[2]);
+      input = screen.getByPlaceholderText(/enter task name/i);
+      fireEvent.change(input, { target: { value: 'Review Task' } });
+      fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
+      
+      // Add to fourth column (Complete)
+      fireEvent.click(screen.getAllByRole('button', { name: /add task/i })[3]);
       input = screen.getByPlaceholderText(/enter task name/i);
       fireEvent.change(input, { target: { value: 'Done Task' } });
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
       
       expect(screen.getByText('Todo Task')).toBeInTheDocument();
       expect(screen.getByText('Progress Task')).toBeInTheDocument();
+      expect(screen.getByText('Review Task')).toBeInTheDocument();
       expect(screen.getByText('Done Task')).toBeInTheDocument();
     });
   });
@@ -292,7 +301,7 @@ describe('App', () => {
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
       
       // Count should still be 0
-      expect(screen.getAllByText('0')).toHaveLength(3);
+      expect(screen.getAllByText('0')).toHaveLength(4);
     });
 
     it('does not add whitespace-only tasks', () => {
@@ -306,7 +315,7 @@ describe('App', () => {
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
       
       // Count should still be 0
-      expect(screen.getAllByText('0')).toHaveLength(3);
+      expect(screen.getAllByText('0')).toHaveLength(4);
     });
   });
 
@@ -336,8 +345,14 @@ describe('App', () => {
       fireEvent.change(input, { target: { value: 'InProgress Task' } });
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
       
-      // Add to Complete
+      // Add to In Review
       fireEvent.click(screen.getAllByRole('button', { name: /add task/i })[2]);
+      input = screen.getByPlaceholderText(/enter task name/i);
+      fireEvent.change(input, { target: { value: 'Review Task' } });
+      fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
+      
+      // Add to Complete
+      fireEvent.click(screen.getAllByRole('button', { name: /add task/i })[3]);
       input = screen.getByPlaceholderText(/enter task name/i);
       fireEvent.change(input, { target: { value: 'Done Task' } });
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
@@ -345,6 +360,7 @@ describe('App', () => {
       // Verify all tasks are present
       expect(screen.getByText('Todo Task')).toBeInTheDocument();
       expect(screen.getByText('InProgress Task')).toBeInTheDocument();
+      expect(screen.getByText('Review Task')).toBeInTheDocument();
       expect(screen.getByText('Done Task')).toBeInTheDocument();
     });
 
@@ -408,7 +424,7 @@ describe('App', () => {
       
       // Test 2: Invalid transition (complete column cannot move anywhere)
       // Add a task to Complete column first
-      fireEvent.click(screen.getAllByRole('button', { name: /add task/i })[2]);
+      fireEvent.click(screen.getAllByRole('button', { name: /add task/i })[3]);
       input = screen.getByPlaceholderText(/enter task name/i);
       fireEvent.change(input, { target: { value: 'Complete Task' } });
       fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });

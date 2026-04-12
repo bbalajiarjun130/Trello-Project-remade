@@ -10,6 +10,7 @@ export default function App() {
   const { tasks, addTask, deleteTask, moveTask } = useTaskManager({
     [COLUMN_TYPES.TODO]: [],
     [COLUMN_TYPES.IN_PROGRESS]: [],
+    [COLUMN_TYPES.IN_REVIEW]: [],
     [COLUMN_TYPES.COMPLETE]: []
   });
 
