@@ -23,6 +23,7 @@ export default function TaskCard({ task, columnKey, onDragStart, onDelete, anima
       onDragEnd={handleDragEnd}
       className={cardClass}
       style={{ animationDelay: `${animationDelay}s` }}
+      data-testid={`task-${task.id}`}
     >
       <div className={styles.cardContent}>
         <GripVertical 

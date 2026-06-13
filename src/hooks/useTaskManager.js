@@ -4,6 +4,11 @@ export function useTaskManager(initialTasks = {}) {
   const [tasks, setTasks] = useState(initialTasks);
 
   const addTask = (columnKey, taskText) => {
+    // Add debug info to DOM
+    document.body.setAttribute('data-debug-hook-addtask-called', 'true');
+    document.body.setAttribute('data-debug-hook-columnkey', columnKey);
+    document.body.setAttribute('data-debug-hook-tasktext', JSON.stringify(taskText));
+    
     const newTask = {
       id: Date.now(),
       text: taskText
