@@ -33,15 +33,28 @@ export default function Column({
   };
 
   const addTask = () => {
-    if (!taskInput.trim()) return;
+    document.body.setAttribute('data-debug-addtask-called', 'true');
+    document.body.setAttribute('data-debug-taskinput', JSON.stringify(taskInput));
+    document.body.setAttribute('data-debug-taskinput-trim', JSON.stringify(taskInput.trim()));
+    document.body.setAttribute('data-debug-validation-result', JSON.stringify(!taskInput.trim()));
     
+    if (!taskInput.trim()) {
+      document.body.setAttribute('data-debug-validation', 'prevented');
+      return;
+    }
+    
+    document.body.setAttribute('data-debug-validation', 'allowed');
     onAddTask(columnKey, taskInput);
     setTaskInput('');
     setShowInput(false);
   };
 
   const handleKeyPress = (e) => {
+    console.log('handleKeyPress called with key:', e.key);
     if (e.key === 'Enter') {
+      console.log('Enter key detected, calling addTask');
+      // Add a visible indicator that this function was called
+      document.body.setAttribute('data-debug-keypress', 'true');
       addTask();
     }
   };
@@ -57,6 +70,7 @@ export default function Column({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      data-testid={`column-${columnKey}`}
     >
       <div className={styles.columnInner}>        
         <div className={headerClass}>
@@ -89,12 +103,14 @@ export default function Column({
                 onKeyPress={handleKeyPress}
                 placeholder="Enter task name..."
                 className={styles.taskInput}
+                data-testid={`task-input-${columnKey}`}
                 autoFocus
               />
               <div className={styles.buttonRow}>
                 <button
                   onClick={addTask}
                   className={styles.addButton}
+                  data-testid={`submit-task-${columnKey}`}
                 >
                   Add Task
                 </button>
@@ -104,6 +120,7 @@ export default function Column({
                     setTaskInput('');
                   }}
                   className={styles.cancelButton}
+                  data-testid={`cancel-task-${columnKey}`}
                 >
                   Cancel
                 </button>
@@ -113,6 +130,7 @@ export default function Column({
             <button
               onClick={() => setShowInput(true)}
               className={styles.addTaskButton}
+              data-testid={`add-task-${columnKey}`}
             >
               <Plus size={20} className={styles.plusIcon} />
               Add Task

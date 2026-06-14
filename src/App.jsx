@@ -34,7 +34,7 @@ export default function App() {
             Organize your tasks with drag & drop simplicity
           </p>
           {restrictionMessage && (
-            <div className={styles.restrictionToast}>
+            <div className={styles.restrictionToast} data-testid="restriction-message">
               ⚠️ {restrictionMessage}
             </div>
           )}
